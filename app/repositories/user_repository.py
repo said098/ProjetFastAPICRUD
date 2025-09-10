@@ -1,12 +1,21 @@
-from typing import List, Optional
-from uuid import UUID
-
+# app/repositories/user_repository.py
+from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from app.entities.user import UserEntity
+from app.repositories.general_repository import GeneralRepository
+
+class UserRepository(GeneralRepository[UserEntity]):
+    def __init__(self, session: Session):
+        super().__init__(session=session, model=UserEntity)
+
+    def get_by_email(self, email: str) -> Optional[UserEntity]:
+        stmt = select(UserEntity).where(UserEntity.email == email)
+        return self.session.scalars(stmt).first()
 
 
+"""
 class UserRepository:
 
     def __init__(self, db: Session) -> None:
@@ -45,3 +54,4 @@ class UserRepository:
     def delete(self, entity: UserEntity) -> None:
         self.db.delete(entity)
         self.db.commit()
+"""
